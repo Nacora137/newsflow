@@ -19,63 +19,62 @@ services:
       retries: 10
     networks:
       - n8n-net
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: news-redis
+  #   restart: unless-stopped
+  #   command: redis-server --appendonly yes --maxmemory 128mb --maxmemory-policy allkeys-lru
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - ./data/redis:/data
+  #   healthcheck:
+  #     test: [ "CMD", "redis-cli", "ping" ]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 10
+  #   networks:
+  #     - n8n-net
 
-  redis:
-    image: redis:7-alpine
-    container_name: news-redis
-    restart: unless-stopped
-    command: redis-server --appendonly yes --maxmemory 128mb --maxmemory-policy allkeys-lru
-    ports:
-      - "6379:6379"
-    volumes:
-      - ./data/redis:/data
-    healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-    networks:
-      - n8n-net
-
-  n8n:
-    image: n8nio/n8n:latest
-    container_name: n8n
-    restart: unless-stopped
-    environment:
-      - N8N_HOST=0.0.0.0
-      - N8N_PORT=5678
-      - N8N_PROTOCOL=http
-      - NODE_ENV=production
-      # PostgreSQL 사용으로 변경
-      - DB_TYPE=postgresdb
-      - DB_POSTGRESDB_HOST=postgres
-      - DB_POSTGRESDB_PORT=5432
-      - DB_POSTGRESDB_DATABASE=newsdb
-      - DB_POSTGRESDB_USER=newsuser
-      - DB_POSTGRESDB_PASSWORD=newspass123
-      - DB_POSTGRESDB_SCHEMA=n8n
-      # 실행 설정
-      - EXECUTIONS_PROCESS=main
-      - EXECUTIONS_DATA_SAVE_ON_ERROR=all
-      - EXECUTIONS_DATA_SAVE_ON_SUCCESS=all
-      - GENERIC_TIMEZONE=Asia/Seoul
-      - WEBHOOK_URL=http://localhost:5678/
-      # 인증 설정
-      - N8N_BASIC_AUTH_ACTIVE=true
-      - N8N_BASIC_AUTH_USER=admin
-      - N8N_BASIC_AUTH_PASSWORD=admin123
-      - N8N_SECURE_COOKIE=false
-    ports:
-      - "5678:5678"
-    volumes:
-      - ./data/n8n:/home/node/.n8n
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    networks:
-      - n8n-net
+  # n8n:
+  #   image: n8nio/n8n:latest
+  #   container_name: n8n
+  #   restart: unless-stopped
+  #   environment:
+  #     - N8N_HOST=0.0.0.0
+  #     - N8N_PORT=5678
+  #     - N8N_PROTOCOL=http
+  #     - NODE_ENV=production
+  #     # PostgreSQL 사용으로 변경
+  #     - DB_TYPE=postgresdb
+  #     - DB_POSTGRESDB_HOST=postgres
+  #     - DB_POSTGRESDB_PORT=5432
+  #     - DB_POSTGRESDB_DATABASE=newsdb
+  #     - DB_POSTGRESDB_USER=newsuser
+  #     - DB_POSTGRESDB_PASSWORD=newspass123
+  #     - DB_POSTGRESDB_SCHEMA=n8n
+  #     # 실행 설정
+  #     - EXECUTIONS_PROCESS=main
+  #     - EXECUTIONS_DATA_SAVE_ON_ERROR=all
+  #     - EXECUTIONS_DATA_SAVE_ON_SUCCESS=all
+  #     - GENERIC_TIMEZONE=Asia/Seoul
+  #     - WEBHOOK_URL=http://localhost:5678/
+  #     # 인증 설정
+  #     - N8N_BASIC_AUTH_ACTIVE=true
+  #     - N8N_BASIC_AUTH_USER=admin
+  #     - N8N_BASIC_AUTH_PASSWORD=admin123
+  #     - N8N_SECURE_COOKIE=false
+  #   ports:
+  #     - "5678:5678"
+  #   volumes:
+  #     - ./data/n8n:/home/node/.n8n
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+  #   networks:
+  #     - n8n-net
 
 networks:
   n8n-net:
