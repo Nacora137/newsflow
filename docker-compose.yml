@@ -11,6 +11,7 @@ services:
       - "5432:5432"
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d
     healthcheck:
       test: [ 'CMD-SHELL', 'pg_isready -U newsuser -d newsdb' ]
       interval: 5s
@@ -45,12 +46,21 @@ services:
       - N8N_PORT=5678
       - N8N_PROTOCOL=http
       - NODE_ENV=production
-      - DB_TYPE=sqlite
+      # PostgreSQL 사용으로 변경
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=newsdb
+      - DB_POSTGRESDB_USER=newsuser
+      - DB_POSTGRESDB_PASSWORD=newspass123
+      - DB_POSTGRESDB_SCHEMA=n8n
+      # 실행 설정
       - EXECUTIONS_PROCESS=main
       - EXECUTIONS_DATA_SAVE_ON_ERROR=all
       - EXECUTIONS_DATA_SAVE_ON_SUCCESS=all
       - GENERIC_TIMEZONE=Asia/Seoul
       - WEBHOOK_URL=http://localhost:5678/
+      # 인증 설정
       - N8N_BASIC_AUTH_ACTIVE=true
       - N8N_BASIC_AUTH_USER=admin
       - N8N_BASIC_AUTH_PASSWORD=admin123
